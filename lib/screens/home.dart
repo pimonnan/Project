@@ -25,6 +25,9 @@ class _HomeState extends State<Home> {
   Homepage homepage = new Homepage();
   FitterSearchActiviy fitterSearchActiviy = new FitterSearchActiviy();
   Menu menu = new Menu();
+  var aa;
+  
+  
   // Activity activity = new Activity();
 
   @override
