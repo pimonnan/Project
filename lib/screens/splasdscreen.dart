@@ -17,7 +17,7 @@ class SplasdScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFEA18),
+      backgroundColor: Color(0xFFFFBE04),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

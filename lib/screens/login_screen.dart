@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<String> Login(String username, String password) async {
     Map data = {'username': username, 'password': password};
+    // final response = await http.post(apiurl + '/login.php', body: data);
     final response =
         await http.post(apiurl + '/Warehouse/login.php', body: data);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -46,6 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (BuildContext context) =>
                   Home()), //เป็นการเชื่อมหน้าต่อไป
           (route) => false);
+      // sharedPreferences = await SharedPreferences.getInstance();
+      // sharedPreferences.getString('p_id');
       return response.body;
     } else {
       usernameController.clear();
@@ -137,31 +140,43 @@ class _LoginScreenState extends State<LoginScreen> {
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                prefixIcon: Icon(
-                  Icons.lock,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Colors.yellow[900],
+              ),
+              hintText: 'กรุณากรอกรหัสผ่าน',
+              hintStyle: kHintTextStyle,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _passwordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off, //ไอคอนเปิดปิด
                   color: Colors.yellow[900],
+                  // color: Theme.of(context).primaryColorDark,
                 ),
-                hintText: 'กรุณากรอกรหัสผ่าน',
-                hintStyle: kHintTextStyle,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.yellow[900],
-                    // color: Theme.of(context).primaryColorDark,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    });
-                  },
-                )),
+                onPressed: () {
+                  //กดเช็คปุ่มเปิดปิด
+                  setState(() {
+                    // Future.delayed(Duration(milliseconds: 300), () {
+                    _passwordVisible = !_passwordVisible;
+                    // });
+                  });
+                },
+              ),
+            ),
             onSaved: (String value) {},
           ),
         ),
       ],
     );
+  }
+
+  void resetPassword() {
+    setState(() {
+      _passwordVisible = true;
+    });
   }
 
   Widget _buildLoginBtn() {
@@ -197,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _passwordVisible = false;
+    _passwordVisible = true; //เปลี่ยนจาก false เป็น true
   }
 
   @override
@@ -217,10 +232,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFFFFEA18),
-                      Color(0xFFFFEA18),
-                      Color(0xFFFFEA18),
-                      Color(0xFFFFEA18),
+                      Color(0xFFFFBE04),
+                      Color(0xFFFFBE04),
+                      Color(0xFFFFBE04),
+                      Color(0xFFFFBE04),
                     ],
                     stops: [0.1, 0.4, 0.7, 0.9],
                   ),

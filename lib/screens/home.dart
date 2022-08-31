@@ -59,8 +59,8 @@ class _HomeState extends State<Home> {
             child: BottomNavigationBar(
               currentIndex: _currentIndex,
               type: BottomNavigationBarType.fixed,
-              // backgroundColor: Color(0xFF34558b),
-              selectedItemColor: Colors.yellow[600], //เปลี่ยนสีตรงคลิก
+              backgroundColor: Color(0xFFFFEA18),
+              selectedItemColor: Colors.black, //เปลี่ยนสีตรงคลิก
               items: [
                 BottomNavigationBarItem(
                   icon: StreamBuilder(

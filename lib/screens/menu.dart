@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:projectnan/api/personnel_api.dart';
 import 'package:projectnan/api/student_api.dart';
+import 'package:projectnan/model/personnel.dart';
 import 'package:projectnan/model/student.dart';
 import 'package:projectnan/screens/edit.dart';
 import 'package:projectnan/screens/login_screen.dart';
@@ -17,11 +19,12 @@ class _MenuState extends State<Menu> {
   SharedPreferences sharedPreferences;
   String _username;
   String _dm;
-  String _e_id;
+  String _p_id;
   String _s_id;
   String _b_name;
   String _s_name;
   List<Students> students = [];
+  List<Personnel> personnel = [];
 
   bool _loading = true;
 
@@ -29,6 +32,7 @@ class _MenuState extends State<Menu> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _loading = true;
     _getLogin();
   }
 
@@ -36,7 +40,7 @@ class _MenuState extends State<Menu> {
     sharedPreferences = await SharedPreferences.getInstance();
     final String username = sharedPreferences.getString("username");
     final String depatrment = sharedPreferences.getString("dm");
-    final String e_id = sharedPreferences.getString("e_id");
+    final String p_id = sharedPreferences.getString("p_id");
     final String s_id = sharedPreferences.getString("s_id");
     final String b_name = sharedPreferences.getString("b");
     final String s_name = sharedPreferences.getString("s_name");
@@ -44,66 +48,114 @@ class _MenuState extends State<Menu> {
     setState(() {
       _username = username;
       _dm = depatrment;
-      _e_id = e_id;
+      _p_id = p_id;
       _s_id = s_id;
       _b_name = b_name;
       _s_name = s_name;
     });
-    _loading = false;
     String u = _username.substring(0, 1);
     if (u == 'P' || u == 'S') {
-    } else
+      _getProfile2(_p_id);
+    } else {
       _getProfile(_s_id);
+    }
   }
 
   _getProfile(String s_id) async {
+    //นักศึกษา
     final students = await Studentapi().getstudent(s_id);
 
     setState(() => this.students = students);
+    _loading = false;
+    // print("students Page: ${students.length} item(s)");
+  }
+
+  _getProfile2(String p_id) async {
+    //เจ้าหน้าที่
+    final personnel = await Personnelapi().getpersonnel(p_id);
+
+    setState(() => this.personnel = personnel);
+    _loading = false;
     // print("students Page: ${students.length} item(s)");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("ตั้งค่า"),
-        backgroundColor: Color(0xFFFFEA18),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.edit_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Edit()),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("ตั้งค่า"),
+          backgroundColor: Color(0xFFFFEA18),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.edit_outlined),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Edit()),
+                  );
+                }),
+            IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () {
+                  _showLogoutAlertDialog();
+                }),
+          ],
+        ),
+        body: _loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : _checkbuild()
+        // ListView.builder(
+        //     shrinkWrap: true,
+        //     itemCount: students.length,
+        //     itemBuilder: (context, index) {
+        //       final student = students[index];
+        //       return students.isNotEmpty
+        //           ? _buildFrom(student)
+        //           : const Text(
+        //               'ไม่มีข้อมูล',
+        //               style: TextStyle(fontSize: 24),
+        //             );
+        //     },
+        //   ),
+        );
+  }
+
+  _checkbuild() {
+    //เช๋คดูว่าใครคือเจ้าหน้าที่ นักศึกษา
+    String u = _username.substring(0, 1);
+    if (u == 'P' || u == 'S') {
+      //เจ้าหน้าที่
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: personnel.length,
+        itemBuilder: (context, index) {
+          final personnels = personnel[index];
+          return personnel.isNotEmpty
+              ? _buildFrom2(personnels)
+              : const Text(
+                  'ไม่มีข้อมูล',
+                  style: TextStyle(fontSize: 24),
                 );
-              }),
-          IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                _showLogoutAlertDialog();
-              }),
-        ],
-      ),
-      body: _loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView.builder(
-              shrinkWrap: true,
-              itemCount: students.length,
-              itemBuilder: (context, index) {
-                final student = students[index];
-                return students.isNotEmpty
-                    ? _buildFrom(student)
-                    : const Text(
-                        'ไม่มีข้อมูล',
-                        style: TextStyle(fontSize: 24),
-                      );
-              },
-            ),
-    );
+        },
+      );
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: students.length,
+        itemBuilder: (context, index) {
+          final student = students[index];
+          return students.isNotEmpty
+              ? _buildFrom(student)
+              : const Text(
+                  'ไม่มีข้อมูล',
+                  style: TextStyle(fontSize: 24),
+                );
+        },
+      );
+    }
   }
 
   _buildFrom(Students student) {
@@ -138,6 +190,9 @@ class _MenuState extends State<Menu> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: AssetImage("assets/pro.png"),
+                          // image: student.sImg != null
+                          //     ? AssetImage("assets/pro.png")
+                          //     : AssetImage(student.sImg),
                         ),
                       ),
                     ),
@@ -159,7 +214,11 @@ class _MenuState extends State<Menu> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[_checktypeUser(student)],
+                        children: <Widget>[
+                          // _checktypeUser(student),
+                          // _formpersonnel(personnel),
+                          _formstudent(student)
+                        ],
                       ),
                     ),
                   ],
@@ -172,149 +231,216 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  _checktypeUser(Students student) {
+  _buildFrom2(Personnel personnel) {
+    double defaultSize = SizeConfig.defaultSize;
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 200,
+          child: Stack(
+            children: <Widget>[
+              ClipPath(
+                clipper: CustomShape(),
+                child: Container(
+                  height: 150,
+                  color: Color(0xFFFFEA18),
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      height: 140,
+                      width: 140,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.yellow[600],
+                          width: 8,
+                        ),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage("assets/pro.png"),
+                          // image: student.sImg != null
+                          //     ? AssetImage("assets/pro.png")
+                          //     : AssetImage(student.sImg),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Container(
+            child: Form(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // _checktypeUser(student),
+                          _formpersonnel(personnel),
+                          // _formstudent(student)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _formpersonnel(Personnel personnel) {
+    return _loading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 16, left: 16, right: 16),
+                        child: Text(
+                          "ชื่อผู้ใช้ : " + '${personnel.pName}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 16, left: 16, right: 16),
+                        child: Text(
+                          "ไอดีผู้ใช้ : " + '${personnel.pId}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 16, left: 16, right: 16),
+                        child: Text(
+                          "ตำแหน่ง : " + '${personnel.dName}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 16, left: 16, right: 16),
+                        child: Text(
+                          "การศึกษา : " + '${personnel.pEducational}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ]),
+          );
+  }
+
+  _formstudent(Students student) {
     String u = _username.substring(0, 1);
     // print(u);
-    if (u == 'P' || u == 'S') {
-      return Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: CircleAvatar(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Text(
-                "ชื่อผู้ใช้ : " + '${_username}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Text(
-                "ไอดีผู้ใช้ : " + '${_e_id}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Text(
-                "ตำแหน่ง : " + '${_dm}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            // Container(
-            //   width: MediaQuery.of(context).size.width,
-            //   height: 40.0,
-            //   margin: EdgeInsets.only(top: 10),
-            //   padding: EdgeInsets.symmetric(horizontal: 20.0),
-            //   child: RaisedButton(
-            //     color: Colors.redAccent,
-            //     onPressed: () {
-            //       setState(() {
-            //         _showLogoutAlertDialog();
-            //       });
-            //     },
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //     ),
-            //     child: Text(
-            //       "Logout",
-            //       style: TextStyle(color: Colors.white70),
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            //   child: CircleAvatar(
-            //     radius: 50,
-            //     child: Image.asset('assets/profileicon.png'),
-            //     backgroundColor: Colors.transparent,
-            //   ),
-            // ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return _loading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "ชื่อผู้ใช้ : " + '${student.sName}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "รหัสนักศึกษา : " + '${student.sId}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "สาขา : " + '${_b_name}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "รหัสบัตรประชาชน : " + '${student.sCard}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "รุ่น : " + '${student.sGenaration}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: Text(
-                    "กลุ่ม : " + '${student.sGroup}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                //   child: CircleAvatar(
+                //     radius: 50,
+                //     child: Image.asset('assets/profileicon.png'),
+                //     backgroundColor: Colors.transparent,
+                //   ),
+                // ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 16, left: 16, right: 16),
+                      child: Text(
+                        "ชื่อผู้ใช้ : " + '${student.sName}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 16, left: 16, right: 16),
+                      child: Text(
+                        "รหัสนักศึกษา : " + '${student.sId}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 16, left: 16, right: 16),
+                      child: Text(
+                        "สาขา : " + '${_b_name}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(top: 16, left: 16, right: 16),
+                    //   child: Text(
+                    //     "รหัสบัตรประชาชน : " + '${student.sCard}',
+                    //     style: TextStyle(
+                    //         fontWeight: FontWeight.bold, fontSize: 18),
+                    //   ),
+                    // ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 16, left: 16, right: 16),
+                      child: Text(
+                        "รุ่น : " + '${student.sGenaration}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 16, left: 16, right: 16),
+                      child: Text(
+                        "กลุ่ม : " + '${student.sGroup}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-
-            // Container(
-            //   width: MediaQuery.of(context).size.width,
-            //   height: 40.0,
-            //   margin: EdgeInsets.only(top: 10),
-            //   padding: EdgeInsets.symmetric(horizontal: 20.0),
-            //   child: RaisedButton(
-            //     color: Colors.redAccent,
-            //     onPressed: () {
-            //       setState(() {
-            //         _showLogoutAlertDialog();
-            //       });
-            //     },
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //     ),
-            //     child: Text(
-            //       "Logout",
-            //       style: TextStyle(color: Colors.white70),
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
-      );
-    }
+          );
   }
 
   void _showLogoutAlertDialog() async {
@@ -324,7 +450,7 @@ class _MenuState extends State<Menu> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text("${sharedPreferences.getString("s_name")}"),
+            // title: Text("${sharedPreferences.getString("s_name")}"),
             content: Text("คุณต้องการออกจากระบบใช่หรือไม่ ?"),
             actions: [
               FlatButton(
@@ -336,22 +462,34 @@ class _MenuState extends State<Menu> {
                           builder: (BuildContext context) => LoginScreen()),
                       (route) => false);
                 },
+                color: Colors.green,
                 child: Text(
-                  "ใช่",
+                  "ตกลง",
                   style: TextStyle(
-                      color: Colors.yellow[700], fontWeight: FontWeight.bold),
+                    color: Colors.black,
+                    letterSpacing: 1.3,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'OpenSans',
+                  ),
                 ),
               ),
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
+                color: Colors.red,
                 child: Text(
-                  "ไม่",
+                  "ยกเลิก",
                   style: TextStyle(
-                      color: Colors.yellow[700], fontWeight: FontWeight.bold),
+                    color: Colors.black,
+                    letterSpacing: 1.3,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'OpenSans',
+                  ),
                 ),
-              ),
+              )
             ],
           );
         });

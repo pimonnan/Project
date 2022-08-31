@@ -150,7 +150,7 @@ class _HomepageState extends State<Homepage>
                                     height: 10,
                                   ),
                                   Text(
-                                    "วันที่ 11/02/2022 ถึง 13/02/2022" +
+                                    "วันที่ 11 ก.พ. 2565 ถึง 13 ก.พ. 2565" +
                                         "              ณ ห้องประชุมมหาวิทยาลัยราชภัฏธนบุรี สมุทรปราการ",
                                     style: TextStyle(
                                       fontSize: 16,

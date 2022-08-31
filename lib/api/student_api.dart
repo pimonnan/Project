@@ -12,6 +12,7 @@ class Studentapi {
 
   Future<List<Students>> getstudent(String s_id) async {
     Map data = {'s_id': s_id};
+    // final url = Uri.parse(apiurl + '/getstudent.php');
     final url = Uri.parse(apiurl + '/Warehouse/getstudent.php');
     final response = await http.post(url, body: data);
     var jsonData = null;

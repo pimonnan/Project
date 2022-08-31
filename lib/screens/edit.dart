@@ -19,7 +19,9 @@ class _EditState extends State<Edit> {
   TextEditingController passwordController = new TextEditingController();
   TextEditingController cpasswordController = new TextEditingController();
   TextEditingController bpasswordController = new TextEditingController();
-  bool _passwordVisible = false;
+  bool _passwordVisible = true;
+  bool _passwordVisible1 = true;
+  bool _passwordVisible2 = true;
   bool _loading = true;
   String _s_id;
   SharedPreferences sharedPreferences;
@@ -28,6 +30,7 @@ class _EditState extends State<Edit> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _getLogin();
   }
 
@@ -53,9 +56,9 @@ class _EditState extends State<Edit> {
       v = value;
       if (v == "Error") {
         _showDualog2();
-        bpasswordController.clear();
-        passwordController.clear();
-        cpasswordController.clear();
+        // bpasswordController.clear();//ให้ดำรงรหัสผ่านทิ้งไว้
+        passwordController.clear(); //ให้ดำรงรหัสผ่านทิ้งไว้
+        cpasswordController.clear(); //ให้ดำรงรหัสผ่านทิ้งไว้
       } else {
         Toast.show("แก้ไขรหัสผ่านสำเร็จ", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -83,8 +86,8 @@ class _EditState extends State<Edit> {
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(
-              horizontal: 40.0,
-              vertical: 120.0,
+              // horizontal: 40.0,//เปลี่ยนพื้นที่ว่าง
+              vertical: 40.0, //เปลี่ยนพื้นที่ว่าง
             ),
             child:
                 // Card(
@@ -126,7 +129,7 @@ class _EditState extends State<Edit> {
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
-              color: Color(0xFFFFE837),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
               boxShadow: [
                 BoxShadow(
@@ -151,7 +154,7 @@ class _EditState extends State<Edit> {
                     Icons.lock,
                     color: Colors.black,
                   ),
-                  hintText: 'กรุณากรอกรหัสผ่านเก่า',
+                  hintText: 'กรุณากรอกรหัสผ่าน',
                   hintStyle: TextStyle(
                     color: Colors.black,
                     fontFamily: 'OpenSans',
@@ -164,6 +167,8 @@ class _EditState extends State<Edit> {
                       color: Colors.black,
                     ),
                     onPressed: () {
+                      // print('nnn:');
+                      // print(_passwordVisible);
                       setState(() {
                         _passwordVisible = !_passwordVisible;
                       });
@@ -195,7 +200,7 @@ class _EditState extends State<Edit> {
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
-              color: Color(0xFFFFE837),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
               boxShadow: [
                 BoxShadow(
@@ -208,7 +213,7 @@ class _EditState extends State<Edit> {
             height: 60.0,
             child: TextFormField(
               controller: passwordController,
-              obscureText: _passwordVisible,
+              obscureText: _passwordVisible1,
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'OpenSans',
@@ -227,14 +232,14 @@ class _EditState extends State<Edit> {
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _passwordVisible
+                      _passwordVisible1
                           ? Icons.visibility
                           : Icons.visibility_off,
                       color: Colors.black,
                     ),
                     onPressed: () {
                       setState(() {
-                        _passwordVisible = !_passwordVisible;
+                        _passwordVisible1 = !_passwordVisible1;
                       });
                     },
                   )),
@@ -264,7 +269,7 @@ class _EditState extends State<Edit> {
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
-              color: Color(0xFFFFE837),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
               boxShadow: [
                 BoxShadow(
@@ -277,7 +282,7 @@ class _EditState extends State<Edit> {
             height: 60.0,
             child: TextFormField(
               controller: cpasswordController,
-              obscureText: _passwordVisible,
+              obscureText: _passwordVisible2,
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'OpenSans',
@@ -296,14 +301,14 @@ class _EditState extends State<Edit> {
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _passwordVisible
+                      _passwordVisible2
                           ? Icons.visibility
                           : Icons.visibility_off,
                       color: Colors.black,
                     ),
                     onPressed: () {
                       setState(() {
-                        _passwordVisible = !_passwordVisible;
+                        _passwordVisible2 = !_passwordVisible2;
                       });
                     },
                   )),
@@ -328,12 +333,12 @@ class _EditState extends State<Edit> {
             // Login(usernameController.text, passwordController.text);
             if (cpasswordController.text == '' ||
                 passwordController.text == '') {
-              passwordController.clear();
-              cpasswordController.clear();
+              // passwordController.clear(); //ให้รหัสผ่านอยู่ที่เดิม
+              // cpasswordController.clear();
               _showDualog();
             } else if (passwordController.text != cpasswordController.text) {
-              passwordController.clear();
-              cpasswordController.clear();
+              // passwordController.clear(); //ให้รหัสผ่านอยู่ที่เดิม
+              // cpasswordController.clear();
               _showDualog();
             } else {
               updatePS(
@@ -351,7 +356,7 @@ class _EditState extends State<Edit> {
               color: Colors.black,
               letterSpacing: 1.5,
               fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               fontFamily: 'OpenSans',
             ),
           ),
@@ -371,17 +376,17 @@ class _EditState extends State<Edit> {
               child: ListBody(
                 children: [
                   Text(
-                    "รหัสผ่านใหม่หรือหรือยืนยันรหัสผ่านใหม่ยังไม่ได้ระบุข้อความ",
-                    style: TextStyle(fontSize: 20),
+                    "รหัสผ่านใหม่ยังไม่ได้ระบุข้อความ",
+                    style: TextStyle(fontSize: 18),
                   ),
-                  Text("กรุณากรอกข้อมูลรหัสผ่านให้ครบถ้วนและยืนยันอีกครั้ง ค่ะ",
-                      style: TextStyle(fontSize: 20))
+                  Text("กรุณากรอกข้อมูลรหัสผ่านอีกครั้ง ค่ะ",
+                      style: TextStyle(fontSize: 18))
                 ],
               ),
             ),
             actions: <Widget>[
               TextButton(
-                  child: Text("ยืนยัน"),
+                  child: Text("ตกลง"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })
@@ -402,16 +407,16 @@ class _EditState extends State<Edit> {
                 children: [
                   Text(
                     "รหัสผ่านเก่าของคุณไม่ถูกต้อง",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 18),
                   ),
-                  Text("กรุณากรอกข้อมูลรหัสผ่านให้ครบถ้วนและยืนยันอีกครั้ง ค่ะ",
-                      style: TextStyle(fontSize: 20))
+                  // Text("กรุณากรอกข้อมูลรหัสผ่านให้ครบถ้วนและยืนยันอีกครั้ง ค่ะ",
+                  //     style: TextStyle(fontSize: 20))
                 ],
               ),
             ),
             actions: <Widget>[
               TextButton(
-                  child: Text("ยืนยัน"),
+                  child: Text("ตกลง"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })

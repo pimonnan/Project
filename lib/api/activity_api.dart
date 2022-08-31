@@ -7,6 +7,7 @@ import 'package:projectnan/untils/constants.dart';
 class Activityapi {
   static Future<List<Activity>> getsearchactivity(String query) async {
     final url = Uri.parse(apiurl + '/Warehouse/getactivity.php');
+    // final url = Uri.parse(apiurl + '/getactivity.php');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

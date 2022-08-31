@@ -13,6 +13,8 @@ class UpdatePassword {
       's_password': s_password,
       'b_password': b_password
     };
+    // final response =
+    // await http.post(apiurl + "/updatepassword.php", body: data);
     final response =
         await http.post(apiurl + "/Warehouse/updatepassword.php", body: data);
     if (response.statusCode == 200) {
