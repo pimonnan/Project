@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:projectnan/api/activity_api.dart';
 import 'package:projectnan/model/activity.dart';
+import 'package:projectnan/screens/activity_management.dart';
 import 'package:projectnan/screens/details_activity.dart';
 import 'package:projectnan/untils/constants.dart';
 import 'package:projectnan/widget/search_widget.dart';
@@ -67,6 +68,17 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
         appBar: AppBar(
           title: Text("งานกิจกรรม"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ActivityManagement()),
+                  );
+                }),
+          ],
           bottom: TabBar(
             unselectedLabelColor: Colors.black,
             labelColor: Colors.amber,
