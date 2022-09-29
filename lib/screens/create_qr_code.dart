@@ -19,7 +19,8 @@ class _CreateQRState extends State<CreateQR> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    qrData = activity.a_id;
+    qrData =
+        activity.a_id; //ดึงข้อความในฐานข้อมูลมาโดยเราดึงรหัสของกิจกรรมออกมา
   }
 
   @override

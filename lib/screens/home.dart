@@ -5,6 +5,7 @@ import 'package:projectnan/screens/fitter_searchactivity.dart';
 // import 'package:projectnan/screens/activity.dart';
 import 'package:projectnan/screens/homepage.dart';
 import 'package:projectnan/screens/menu.dart';
+import 'package:projectnan/screens/setting.dart';
 import 'package:projectnan/untils/badgeIcon.dart';
 
 class Home extends StatefulWidget {
@@ -25,9 +26,8 @@ class _HomeState extends State<Home> {
   Homepage homepage = new Homepage();
   FitterSearchActiviy fitterSearchActiviy = new FitterSearchActiviy();
   Menu menu = new Menu();
-  var aa;
-  
-  
+  //Setting setting = new Setting();
+
   // Activity activity = new Activity();
 
   @override

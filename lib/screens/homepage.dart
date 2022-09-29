@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projectnan/model/image.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key key}) : super(key: key);
@@ -14,6 +15,12 @@ class _HomepageState extends State<Homepage>
     with SingleTickerProviderStateMixin {
   Animation delayedAnimation;
   AnimationController animationController;
+  List<MyImage> imageList = [
+    MyImage('กิจกรรมไหว้ครู', 'assets/t.jpg'),
+    MyImage('กิจกรรมงานกีฬาสี', 'assets/gg.jpg'),
+    MyImage('กิจกรรมปฐมนิเทศ', 'assets/bo.jpg'),
+    MyImage('กิจกรรมประกวดดาวเดือน', 'assets/ff.jpg'),
+  ];
 
   @override
   void initState() {
@@ -39,17 +46,6 @@ class _HomepageState extends State<Homepage>
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
 
-    List imageList = [
-      // 'assets/766bca875e02e4d48dcfe7aca9ab2a86.jpg',
-      // 'assets/logo1.png',
-      // 'assets/logo2.png',
-      // 'assets/pro.png',
-      'assets/กิจกรรมไหว้ครู.png',
-      'assets/tt2.png',
-      'assets/กิจกรรมไหว้ครู3.png',
-      'assets/กิจกรรมไหว้ครู4.png',
-    ];
-
     return Scaffold(
       body: NestedScrollView(
         floatHeaderSlivers: true,
@@ -69,7 +65,7 @@ class _HomepageState extends State<Homepage>
             CarouselSlider(
               //Slider Container properties
               options: CarouselOptions(
-                height: 180.0,
+                height: 260.0,
                 enlargeCenterPage: true,
                 autoPlay: true,
                 aspectRatio: 16 / 9,
@@ -78,27 +74,44 @@ class _HomepageState extends State<Homepage>
                 autoPlayAnimationDuration: Duration(milliseconds: 800),
                 viewportFraction: 0.8,
               ),
-              items: imageList
-                  .map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Container(
-                        width: 550,
-                        color: Colors.white,
+              items: imageList.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        //กรอบรูป
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25),
+                        ),
                         child: Image.asset(
-                          item,
-                          fit: BoxFit.fill,
+                          item.pathImage,
+                          // width: 500,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
+                      SizedBox(
+                        height: 1,
+                      ),
+                      Expanded(
+                        child: Text(
+                          item.nameImage,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18.5,
+                              fontStyle: FontStyle.italic), //ตัวหนังสือเอียง
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
             SizedBox(
-              height: 16,
+              height: 1,
             ),
             Container(
-              padding: EdgeInsets.only(left: 30),
+              padding: EdgeInsets.only(left: 20),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
@@ -113,18 +126,18 @@ class _HomepageState extends State<Homepage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(top: 50),
+                        padding: EdgeInsets.only(top: 20),
                         child: Text(
                           "ประชาสัมพันธ์",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 25,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: EdgeInsets.only(top: 8.5),
                         child: Row(
                           children: <Widget>[
                             Icon(
@@ -139,7 +152,7 @@ class _HomepageState extends State<Homepage>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    "กิจกรรมปฐมนิเทศ",
+                                    "< กิจกรรมปฐมนิเทศ >",
                                     style: (TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.normal,
@@ -163,7 +176,48 @@ class _HomepageState extends State<Homepage>
                             )
                           ],
                         ),
-                      )
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              CupertinoIcons.check_mark_circled_solid,
+                              color: Colors.green,
+                              size: 25,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    "< กิจกรรมไหว้ครู >",
+                                    style: (TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    )),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "วันที่ 15 ก.พ. 2565 ถึง 16 ก.พ. 2565" +
+                                        "              ณ ห้องประชุมมหาวิทยาลัยราชภัฏธนบุรี สมุทรปราการ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   )
                 ],

@@ -54,7 +54,7 @@ class _MenuState extends State<Menu> {
       _s_name = s_name;
     });
     String u = _username.substring(0, 1);
-    if (u == 'P' || u == 'S') {
+    if (u == 'P' || u == 'S') {//p ผู้ดูแล s นักเรียน
       _getProfile2(_p_id);
     } else {
       _getProfile(_s_id);

@@ -45,15 +45,15 @@ class _DetailsActivityState extends State<DetailsActivity> {
 
   Widget _detailsactivity(context) => Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Center(
-              child: Image.network(
-                'https://scontent.fbkk8-4.fna.fbcdn.net/v/t1.18169-9/268947_216414225067313_2210587_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=cdbe9c&_nc_eui2=AeHROxc_gKaeoCTLjio33ZFdJ6acQfibxfonppxB-JvF-lcWIK-UnjVZzQOlpesl4yBJBSwK-a3wsMOEhJR6KEet&_nc_ohc=LjLbCnseIiAAX8CCCtn&_nc_ht=scontent.fbkk8-4.fna&oh=00_AT_fqSkbKPBMVlcaw5EGzXc3uF4c4fjsQKsIVFXY1fMBrg&oe=62DC6C52',
-                // width: 350,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(10),
+          //   child: Center(
+          //     child: Image.network(
+          //       'https://scontent.fbkk8-4.fna.fbcdn.net/v/t1.18169-9/268947_216414225067313_2210587_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=cdbe9c&_nc_eui2=AeHROxc_gKaeoCTLjio33ZFdJ6acQfibxfonppxB-JvF-lcWIK-UnjVZzQOlpesl4yBJBSwK-a3wsMOEhJR6KEet&_nc_ohc=LjLbCnseIiAAX8CCCtn&_nc_ht=scontent.fbkk8-4.fna&oh=00_AT_fqSkbKPBMVlcaw5EGzXc3uF4c4fjsQKsIVFXY1fMBrg&oe=62DC6C52',
+          //       // width: 350,
+          //     ),
+          //   ),
+          // ),
           Card(
             child: Padding(
               padding: EdgeInsets.all(8),
