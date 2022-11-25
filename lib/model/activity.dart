@@ -10,8 +10,6 @@ class Activity {
     this.a_status,
     this.a_decription,
     this.p_name,
-    this.f_id,
-    this.f_name,
   });
 
   String a_id;
@@ -24,8 +22,6 @@ class Activity {
   String a_status;
   String a_decription;
   String p_name;
-  String f_id;
-  String f_name;
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
         a_id: json["a_id"],
@@ -38,8 +34,6 @@ class Activity {
         a_status: json["a_status"],
         a_decription: json["a_decription"],
         p_name: json["p_name"],
-        f_id: json["f_id"],
-        f_name: json["f_name"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,7 +49,5 @@ class Activity {
         "a_status": a_status,
         "a_decription": a_decription,
         "p_name": p_name,
-        "f_id": f_id,
-        "f_name": f_name,
       };
 }

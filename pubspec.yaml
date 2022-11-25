@@ -41,6 +41,8 @@ dependencies:
   barcode_scan: ^2.0.1
   qr_flutter: ^3.2.0
   flutter_form_builder: any
+  flutter_rounded_date_picker: any
+  flutter_localizations: any
 
   
 dev_dependencies:

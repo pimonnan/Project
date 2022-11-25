@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:projectnan/screens/login_screen.dart';
 import 'package:projectnan/screens/splasdscreen.dart';
 
+
 void main() {
   Intl.defaultLocale = 'th';
   initializeDateFormatting();
@@ -21,10 +22,11 @@ class MyApp extends StatelessWidget {
         // Show splash screen while waiting for app resources to load:
         if (snapshot.connectionState == ConnectionState.waiting) {
           return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                  primaryColor: Color(0xFFFFEA18), fontFamily: 'Lato'),
-              home: SplasdScreen());
+            debugShowCheckedModeBanner: false,
+            theme:
+                ThemeData(primaryColor: Color(0xFFFFEA18), fontFamily: 'Lato'),
+            home: SplasdScreen(),
+          );
         } else {
           // Loading is done, return the app:
           return MaterialApp(

@@ -72,14 +72,6 @@ class _DetailsActivityState extends State<DetailsActivity> {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'ชื่อคณะ : ' + activity.f_name,
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                  ),
-                  SizedBox(
                     height: 16,
                   ),
                   Text(
