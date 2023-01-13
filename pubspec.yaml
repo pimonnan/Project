@@ -42,7 +42,8 @@ dependencies:
   qr_flutter: ^3.2.0
   flutter_form_builder: any
   flutter_rounded_date_picker: any
-  flutter_localizations: any
+  date_time_picker: ^1.0.2
+ 
 
   
 dev_dependencies:

@@ -26,7 +26,6 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLoading = true;
     int();
@@ -34,7 +33,6 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     debouncer?.cancel();
     super.dispose();
   }
@@ -129,11 +127,11 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
   buildActivity(Activity activity) {
     var inputFormat = DateFormat('hh:mm');
     return Card(
-      // color: Colors.pink,
-      elevation: 4,
+      color: Colors.yellowAccent[100],
+      elevation: 15,
       child: ListTile(
         leading: SizedBox(
-          width: 100,
+          width: 110,
           child: Text(
             activity.a_name,
             overflow: TextOverflow.ellipsis,
@@ -141,7 +139,7 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
             softWrap: false,
           ),
         ),
-        title: Text('จำนวนเข้าร่วม : ' + activity.a_qty),
+        title: Text('จำนวนผู้เข้าร่วม : ' + activity.a_qty + ' คน'),
         subtitle: Text('วันที่ : ' +
             Formatting.formatInBuddhistCalendarThai(activity.a_datestart)
                 .toString() +

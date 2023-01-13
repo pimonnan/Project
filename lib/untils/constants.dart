@@ -24,5 +24,5 @@ final kBoxDecorationStyle = BoxDecoration(
 );
 
 // const apiurl = 'https://activityqrcode.herokuapp.com';
-const apiurl = 'http://192.168.1.110';
+const apiurl = 'http://172.20.10.3';
 const IconData manage_search = IconData(0xe3c7, fontFamily: 'MaterialIcons');
