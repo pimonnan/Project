@@ -11,7 +11,6 @@ class _ScanState extends State<Scan> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -52,7 +51,8 @@ class _ScanState extends State<Scan> {
               shape: RoundedRectangleBorder(
                   side: BorderSide(color: Colors.blue, width: 3.0),
                   borderRadius: BorderRadius.circular(20.0)),
-            )
+            ),
+            Text(qrResult),
           ],
         ),
       ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:projectnan/api/updatepassword.dart';
+import 'package:projectnan/api/update_password_api.dart';
 import 'package:projectnan/untils/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,9 +50,7 @@ class _EditState extends State<Edit> {
 
   updatePS(String s_id, String s_password, String b_password) {
     String v;
-    UpdatePassword()
-        .updatePasswordS(s_id, s_password, b_password)
-        .then((value) {
+    UpdatePassword().updatePassword(s_id, s_password, b_password).then((value) {
       v = value;
       if (v == "Error") {
         _showDualog2();

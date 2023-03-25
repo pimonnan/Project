@@ -1,11 +1,16 @@
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projectnan/api/insert_join_activity.dart';
+import 'package:projectnan/api/scan_qr_code_api.dart';
 import 'package:projectnan/model/activity.dart';
-import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:projectnan/screens/create_qr_code.dart';
-import 'package:projectnan/screens/scan_qr_code.dart';
+import 'package:projectnan/untils/dialog_widget.dart';
+import 'package:projectnan/untils/space_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class DetailsActivity extends StatefulWidget {
   Activity activity;
   DetailsActivity(this.activity);
@@ -15,16 +20,18 @@ class DetailsActivity extends StatefulWidget {
 }
 
 class _DetailsActivityState extends State<DetailsActivity> {
+  TextEditingController controller = new TextEditingController();
   Activity activity;
   _DetailsActivityState(this.activity);
-  var Formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
+  var formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
   bool _loading = true;
-  String _p_id;
+  String p_Id;
+  String s_Id;
   SharedPreferences sharedPreferences;
+  String qrResult = '';
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loading = false;
     _getLogin();
@@ -56,7 +63,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
           // ),
           Card(
             child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +89,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
                   SizedBox(
                     height: 16,
                   ),
-                  TextStatus(),
+                  textStatus(),
                   SizedBox(
                     height: 16,
                   ),
@@ -106,7 +113,8 @@ class _DetailsActivityState extends State<DetailsActivity> {
                     children: [
                       Text(
                         'วันที่ : ' +
-                            Formatting.formatInBuddhistCalendarThai(
+                            formatting
+                                .formatInBuddhistCalendarThai(
                                     activity.a_datestart)
                                 .toString() +
                             '\t\t',
@@ -115,7 +123,8 @@ class _DetailsActivityState extends State<DetailsActivity> {
                       ),
                       Text(
                         'ถึง : ' +
-                            Formatting.formatInBuddhistCalendarThai(
+                            formatting
+                                .formatInBuddhistCalendarThai(
                                     activity.a_dateend)
                                 .toString(),
                         style: TextStyle(
@@ -145,11 +154,11 @@ class _DetailsActivityState extends State<DetailsActivity> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  // Text(_p_id),
-                  QRbtn(),
+                  verticalSpaceM,
+                  qrButton(activity.a_id, s_Id),
+                  verticalSpaceM,
+                  // Text(qrResult),
+                  // Text(activity.a_id),
                 ],
               ),
             ),
@@ -157,7 +166,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
         ],
       );
 
-  TextStatus() {
+  textStatus() {
     if (activity.a_status == '0') {
       return Text(
         'สถานะ : กิจกรรมใหม่',
@@ -181,41 +190,201 @@ class _DetailsActivityState extends State<DetailsActivity> {
   _getLogin() async {
     //ดึงจากล็อกอิน id ของเจ้าหน้าที่
     sharedPreferences = await SharedPreferences.getInstance();
-    final String p_id = sharedPreferences.getString("p_id");
+    final String pId = sharedPreferences.getString("p_id");
+    final String sId = sharedPreferences.getString("s_id");
 
     setState(() {
-      _p_id = p_id;
+      p_Id = pId;
+      s_Id = sId;
     });
   }
 
-  Widget QRbtn() {
+  Widget qrButton(String aId, String sId) {
     // print(_p_id);
-    if (_p_id != null) {
+    if (p_Id != null) {
       //ของเจ้าหน้าที่
-      return Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateQR(activity)),
-            );
-          },
-          child: const Text('สร้าง OR Code'),
-        ),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateQR(activity)),
+              );
+            },
+            child: const Text('สร้าง OR Code'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              addIdDialog();
+            },
+            child: const Text('เพิ่มรหัสนักศึกษา'),
+          ),
+        ],
       );
     } else {
       //ของนักศึกษา
       return Center(
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Scan()),
-            );
+          onPressed: () async {
+            String scaning = await BarcodeScanner.scan();
+            setState(() {
+              qrResult = scaning;
+            });
+            if (qrResult != '') {
+              if (qrResult == aId) {
+                final result = await ScanQR().scanqrRequest(sId, aId);
+                print(result);
+                if (result == 'Success') {
+                  showSuccessDialog();
+                } else if (result == 'Error') {
+                  showNotActivityDialog();
+                } else {
+                  showDistrictDialog();
+                }
+              } else {
+                showNotNameOnActivityDialog();
+              }
+            }
           },
           child: const Text('สแกน OR Code'),
         ),
       );
     }
+  }
+
+  void addIdDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.white,
+            ),
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'โปรดใส่รหัสนักศึกษาเพื่อเพิ่มนักศึกษาเข้ากิจกรรม',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                verticalSpaceM,
+                TextFormField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    labelText: 'เพิ่มรหัสนักศึกษา',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: Colors.blueAccent,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                verticalSpaceM,
+                InkWell(
+                  onTap: () async {
+                    if (controller.value != null) {
+                      await InsertJoinActivity()
+                          .insertJoinActivity(activity.a_id, controller.text);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: Colors.blue,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'ตกลง',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                  splashColor: Colors.white,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+          title: 'เข้าร่วมกิจกรรมสำเร็จ',
+          subTitle: '',
+          buttonTitle: 'ตกลง',
+          color: Colors.green,
+          iconData: Icons.check,
+        );
+      },
+    );
+  }
+
+  void showDistrictDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+            title: 'รายชื่อซ้ำ',
+            subTitle: '',
+            buttonTitle: 'ตกลง',
+            color: Colors.yellow,
+            iconData: Icons.warning);
+      },
+    );
+  }
+
+  void showNotActivityDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+            title: 'ไม่ใช่กิจกรรมที่จะสแกน',
+            subTitle: '',
+            buttonTitle: 'ตกลง',
+            color: Colors.yellow,
+            iconData: Icons.warning);
+      },
+    );
+  }
+
+  void showNotNameOnActivityDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+            title: 'ไม่มีรายชื่ออยู่ในกิจกรรมที่จะสแกน',
+            subTitle: '',
+            buttonTitle: 'ตกลง',
+            color: Colors.yellow,
+            iconData: Icons.warning);
+      },
+    );
   }
 }
