@@ -23,6 +23,8 @@ final kBoxDecorationStyle = BoxDecoration(
   ],
 );
 
-// const apiurl = 'https://activityqrcode.herokuapp.com';
-const apiurl = 'http://192.168.1.107';
+const apiurl =
+    'https://de4b-2405-9800-bca0-6c30-b0a7-3b54-e66f-99e4.ap.ngrok.io';
+
+// const apiurl = 'http://192.168.1.107';
 const IconData manage_search = IconData(0xe3c7, fontFamily: 'MaterialIcons');

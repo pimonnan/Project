@@ -21,7 +21,7 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
   List<Activity> activitys = [];
   String query = '';
   Timer debouncer;
-  var Formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
+  var formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
   bool isLoading = true;
   Activity activitySelected;
   var activitySelectedIndex = -1;
@@ -268,11 +268,11 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
                       ),
                       child: Text(
                         'วันที่ : ' +
-                            Formatting.formatInBuddhistCalendarThai(
+                            formatting.formatInBuddhistCalendarThai(
                                     activity.a_datestart)
                                 .toString() +
                             '\t\tถึง\t\t' +
-                            Formatting.formatInBuddhistCalendarThai(
+                            formatting.formatInBuddhistCalendarThai(
                                     activity.a_dateend)
                                 .toString(),
                         style: const TextStyle(
@@ -290,10 +290,6 @@ class _FitterSearchActiviyState extends State<FitterSearchActiviy> {
           ),
         ),
         onTap: () {
-          // setState(() {
-          //   activitySelectedIndex = index;
-          //   activitySelected = activity;
-          // });
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => DetailsActivity(activity)),

@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'package:projectnan/model/student.dart';
 import 'package:projectnan/untils/constants.dart';
-import 'package:toast/toast.dart';
 
 class UpdatePassword {
-  Future<String> updatePasswordS(
+  Future<String> updatePassword(
       String s_id, String s_password, String b_password) async {
     Map data = {
       's_id': s_id,

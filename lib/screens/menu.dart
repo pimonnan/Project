@@ -5,8 +5,8 @@ import 'package:projectnan/model/personnel.dart';
 import 'package:projectnan/model/student.dart';
 import 'package:projectnan/screens/edit.dart';
 import 'package:projectnan/screens/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projectnan/widget/size_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key key}) : super(key: key);
@@ -18,11 +18,11 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   SharedPreferences sharedPreferences;
   String _username;
-  String _dm;
-  String _p_id;
-  String _s_id;
-  String _b_name;
-  String _s_name;
+  String dm;
+  String _pId;
+  String _sId;
+  String _bName;
+  String _sName;
   List<Students> students = [];
   List<Personnel> personnel = [];
   final index = '';
@@ -31,7 +31,6 @@ class _MenuState extends State<Menu> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loading = true;
     _getLogin();
@@ -41,40 +40,40 @@ class _MenuState extends State<Menu> {
     sharedPreferences = await SharedPreferences.getInstance();
     final String username = sharedPreferences.getString("username");
     final String depatrment = sharedPreferences.getString("dm");
-    final String p_id = sharedPreferences.getString("p_id");
-    final String s_id = sharedPreferences.getString("s_id");
-    final String b_name = sharedPreferences.getString("b");
-    final String s_name = sharedPreferences.getString("s_name");
+    final String pId = sharedPreferences.getString("p_id");
+    final String sId = sharedPreferences.getString("s_id");
+    final String bName = sharedPreferences.getString("b");
+    final String sName = sharedPreferences.getString("s_name");
 
     setState(() {
       _username = username;
-      _dm = depatrment;
-      _p_id = p_id;
-      _s_id = s_id;
-      _b_name = b_name;
-      _s_name = s_name;
+      dm = depatrment;
+      _pId = pId;
+      _sId = sId;
+      _bName = bName;
+      _sName = sName;
     });
     String u = _username.substring(0, 1);
     if (u == 'P' || u == 'S') {
       //p ผู้ดูแล s นักเรียน
-      _getProfile2(_p_id);
+      _getProfile2(_pId);
     } else {
-      _getProfile(_s_id);
+      _getProfile(_sId);
     }
   }
 
-  _getProfile(String s_id) async {
+  _getProfile(String sId) async {
     //นักศึกษา
-    final students = await Studentapi().getstudent(s_id);
+    final students = await Studentapi().getstudent(sId);
 
     setState(() => this.students = students);
     _loading = false;
     // print("students Page: ${students.length} item(s)");
   }
 
-  _getProfile2(String p_id) async {
+  _getProfile2(String pId) async {
     //เจ้าหน้าที่
-    final personnel = await Personnelapi().getpersonnel(p_id);
+    final personnel = await Personnelapi().getpersonnel(pId);
 
     setState(() => this.personnel = personnel);
     _loading = false;
@@ -161,6 +160,7 @@ class _MenuState extends State<Menu> {
   }
 
   _buildFrom(Students student) {
+    // ignore: unused_local_variable
     double defaultSize = SizeConfig.defaultSize;
     return Column(
       children: <Widget>[
@@ -406,7 +406,7 @@ class _MenuState extends State<Menu> {
                       padding:
                           const EdgeInsets.only(top: 16, left: 16, right: 16),
                       child: Text(
-                        "สาขา : " + '${_b_name}',
+                        "สาขา : " + '${_bName}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
