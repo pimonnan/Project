@@ -1,10 +1,6 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:projectnan/api/update_password_api.dart';
-import 'package:projectnan/untils/constants.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
@@ -345,7 +341,7 @@ class _EditState extends State<Edit> {
           },
           padding: EdgeInsets.all(15.0),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: BorderRadius.circular(10.0),
           ),
           color: Color(0xFFFFEA18),
           child: Text(

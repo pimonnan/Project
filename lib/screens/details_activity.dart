@@ -2,9 +2,12 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projectnan/api/get_join_activity.dart';
 import 'package:projectnan/api/insert_join_activity.dart';
 import 'package:projectnan/api/scan_qr_code_api.dart';
+import 'package:projectnan/api/update_activity.dart';
 import 'package:projectnan/model/activity.dart';
+import 'package:projectnan/model/join_activity.dart';
 import 'package:projectnan/screens/create_qr_code.dart';
 import 'package:projectnan/untils/dialog_widget.dart';
 import 'package:projectnan/untils/space_widget.dart';
@@ -20,6 +23,8 @@ class DetailsActivity extends StatefulWidget {
 }
 
 class _DetailsActivityState extends State<DetailsActivity> {
+  List<JoinActivity> joinactivity = [];
+  String query = '';
   TextEditingController controller = new TextEditingController();
   Activity activity;
   _DetailsActivityState(this.activity);
@@ -33,8 +38,19 @@ class _DetailsActivityState extends State<DetailsActivity> {
   @override
   void initState() {
     super.initState();
-    _loading = false;
+    _loading = true;
     _getLogin();
+    getJoinactivity();
+  }
+
+  Future getJoinactivity() async {
+    final joinactivity =
+        await GetJoinActivityapi.getJoinActivity(activity.a_id);
+
+    setState(() {
+      this.joinactivity = joinactivity;
+      _loading = false;
+    });
   }
 
   @override
@@ -46,24 +62,19 @@ class _DetailsActivityState extends State<DetailsActivity> {
       ),
       body: (_loading
           ? Center(child: CircularProgressIndicator())
-          : ListView(children: [_detailsactivity(context)])),
+          : ListView(
+              children: [
+                _detailsactivity(context),
+              ],
+            )),
     );
   }
 
   Widget _detailsactivity(context) => Column(
         children: [
-          // Padding(
-          //   padding: EdgeInsets.all(10),
-          //   child: Center(
-          //     child: Image.network(
-          //       'https://scontent.fbkk8-4.fna.fbcdn.net/v/t1.18169-9/268947_216414225067313_2210587_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=cdbe9c&_nc_eui2=AeHROxc_gKaeoCTLjio33ZFdJ6acQfibxfonppxB-JvF-lcWIK-UnjVZzQOlpesl4yBJBSwK-a3wsMOEhJR6KEet&_nc_ohc=LjLbCnseIiAAX8CCCtn&_nc_ht=scontent.fbkk8-4.fna&oh=00_AT_fqSkbKPBMVlcaw5EGzXc3uF4c4fjsQKsIVFXY1fMBrg&oe=62DC6C52',
-          //       // width: 350,
-          //     ),
-          //   ),
-          // ),
           Card(
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +86,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
                     child: Text(
                       'ชื่อกิจกรรม : ' + activity.a_name,
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(
@@ -89,7 +100,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
                   SizedBox(
                     height: 16,
                   ),
-                  textStatus(),
+                  textActivityStatus(),
                   SizedBox(
                     height: 16,
                   ),
@@ -157,8 +168,9 @@ class _DetailsActivityState extends State<DetailsActivity> {
                   verticalSpaceM,
                   qrButton(activity.a_id, s_Id),
                   verticalSpaceM,
-                  // Text(qrResult),
-                  // Text(activity.a_id),
+                  buttonOpenandStopActivity(),
+                  verticalSpaceS,
+                  tableStudent(),
                 ],
               ),
             ),
@@ -166,7 +178,69 @@ class _DetailsActivityState extends State<DetailsActivity> {
         ],
       );
 
-  textStatus() {
+  Widget tableStudent() {
+    if (p_Id != null) {
+      return DataTable(
+        columns: [
+          DataColumn(
+            label: Text(
+              'รหัสนักศึกษา',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Text(
+              'ชื่อนักศึกษา',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Text(
+              'สถานะ',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+        rows: joinactivity.map((data) {
+          return DataRow(
+            cells: [
+              DataCell(
+                Text(
+                  data.sId,
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ),
+              DataCell(
+                Text(
+                  data.sName,
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ),
+              DataCell(
+                Text(
+                  data.joinStatus,
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  textActivityStatus() {
     if (activity.a_status == '0') {
       return Text(
         'สถานะ : กิจกรรมใหม่',
@@ -199,27 +273,133 @@ class _DetailsActivityState extends State<DetailsActivity> {
     });
   }
 
+  textJoinActivityStatus(int status) {
+    if (status == 0) {
+      return Text(
+        'ยังไม่ได้เข้าร่วมกิจกรรม',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      );
+    } else if (status == 1) {
+      return Text(
+        'เข้าร่วมกิจกรรมแล้ว',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      );
+    } else if (status == 2) {
+      return Text(
+        'ไม่ได้เข้าร่วมกิจกรรม',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      );
+    } else {
+      return Text(
+        'สถานะ',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      );
+    }
+  }
+
+  buttonOpenandStopActivity() {
+    if (p_Id != null) {
+      if (activity.a_status == '0') {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color(0xFFFFEA18),
+          ),
+          onPressed: () async {
+            await UpdateActivity().updateActivity(activity.a_id, 1);
+            Navigator.pop(context, true);
+            showSuccessDialog('เปิดกิจกรรมเรียบร้อย');
+          },
+          child: const Text(
+            'เปิดกิจกรรม',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'OpenSans'),
+          ),
+        );
+      } else if (activity.a_status == '1') {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color(0xFFFFEA18),
+          ),
+          onPressed: () async {
+            await UpdateActivity().updateActivity(activity.a_id, 2);
+            Navigator.pop(context, true);
+            showSuccessDialog('ปิดกิจกรรมเรียบร้อย');
+          },
+          child: const Text(
+            'ปิดกิจกรรม',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'OpenSans'),
+          ),
+        );
+      } else if (activity.a_status == '2') {
+        return Container();
+      } else {
+        return Text('');
+      }
+    } else {
+      return Container();
+    }
+  }
+
   Widget qrButton(String aId, String sId) {
     // print(_p_id);
     if (p_Id != null) {
       //ของเจ้าหน้าที่
       return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Color(0xFFFFEA18),
+            ),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CreateQR(activity)),
               );
             },
-            child: const Text('สร้าง OR Code'),
+            child: const Text(
+              'สร้าง OR Code',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'OpenSans'),
+            ),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Color(0xFFFFEA18),
+            ),
             onPressed: () {
               addIdDialog();
             },
-            child: const Text('เพิ่มรหัสนักศึกษา'),
+            child: const Text(
+              'เพิ่มรหัสนักศึกษา',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'OpenSans'),
+            ),
           ),
         ],
       );
@@ -227,6 +407,9 @@ class _DetailsActivityState extends State<DetailsActivity> {
       //ของนักศึกษา
       return Center(
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color(0xFFFFEA18),
+          ),
           onPressed: () async {
             String scaning = await BarcodeScanner.scan();
             setState(() {
@@ -237,7 +420,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
                 final result = await ScanQR().scanqrRequest(sId, aId);
                 print(result);
                 if (result == 'Success') {
-                  showSuccessDialog();
+                  showSuccessDialog('เข้าร่วมกิจกรรมแล้ว');
                 } else if (result == 'Error') {
                   showNotActivityDialog();
                 } else {
@@ -248,7 +431,14 @@ class _DetailsActivityState extends State<DetailsActivity> {
               }
             }
           },
-          child: const Text('สแกน OR Code'),
+          child: const Text(
+            'สแกน OR Code',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'OpenSans'),
+          ),
         ),
       );
     }
@@ -278,14 +468,14 @@ class _DetailsActivityState extends State<DetailsActivity> {
                 TextFormField(
                   controller: controller,
                   decoration: InputDecoration(
-                    labelText: 'เพิ่มรหัสนักศึกษา',
+                    // labelText: 'เพิ่มรหัสนักศึกษา',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: Colors.blueAccent,
+                        color: Colors.grey,
                         width: 2.0,
                       ),
                     ),
@@ -302,6 +492,11 @@ class _DetailsActivityState extends State<DetailsActivity> {
                       await InsertJoinActivity()
                           .insertJoinActivity(activity.a_id, controller.text);
                       Navigator.of(context).pop();
+                      controller.clear();
+                      setState(() {
+                        getJoinactivity();
+                      });
+                      showSuccessDialog('เพิ่มรหัสนักศึกษาเรียบร้อย');
                     }
                   },
                   child: Container(
@@ -309,13 +504,13 @@ class _DetailsActivityState extends State<DetailsActivity> {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Colors.blue,
+                      color: Color(0xFFFFEA18),
                     ),
                     child: Center(
                       child: Text(
                         'ตกลง',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 18,
                         ),
                       ),
@@ -331,12 +526,12 @@ class _DetailsActivityState extends State<DetailsActivity> {
     );
   }
 
-  void showSuccessDialog() {
+  void showSuccessDialog(String title) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return DialogWidget(
-          title: 'เข้าร่วมกิจกรรมสำเร็จ',
+          title: title,
           subTitle: '',
           buttonTitle: 'ตกลง',
           color: Colors.green,
