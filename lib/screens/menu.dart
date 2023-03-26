@@ -5,6 +5,7 @@ import 'package:projectnan/model/personnel.dart';
 import 'package:projectnan/model/student.dart';
 import 'package:projectnan/screens/edit.dart';
 import 'package:projectnan/screens/login_screen.dart';
+import 'package:projectnan/untils/dialog_widget.dart';
 import 'package:projectnan/widget/size_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -455,7 +456,8 @@ class _MenuState extends State<Menu> {
             // title: Text("${sharedPreferences.getString("s_name")}"),
             content: Text("คุณต้องการออกจากระบบใช่หรือไม่ ?"),
             actions: [
-              FlatButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.green),
                 onPressed: () {
                   sharedPreferences.clear();
                   sharedPreferences.commit();
@@ -464,7 +466,6 @@ class _MenuState extends State<Menu> {
                           builder: (BuildContext context) => LoginScreen()),
                       (route) => false);
                 },
-                color: Colors.green,
                 child: Text(
                   "ตกลง",
                   style: TextStyle(
@@ -476,11 +477,11 @@ class _MenuState extends State<Menu> {
                   ),
                 ),
               ),
-              FlatButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.red),
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                color: Colors.red,
                 child: Text(
                   "ยกเลิก",
                   style: TextStyle(

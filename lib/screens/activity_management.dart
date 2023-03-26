@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projectnan/untils/constants.dart';
+import 'package:projectnan/untils/dialog_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 
 class ActivityManagement extends StatefulWidget {
   const ActivityManagement({Key key}) : super(key: key);
@@ -23,6 +25,8 @@ class _ActivityManagementState extends State<ActivityManagement> {
   TextEditingController timeStarteController = new TextEditingController();
   TextEditingController timeEndController = new TextEditingController();
   SharedPreferences sharedPreferences;
+  var formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
+  final formKey = GlobalKey<FormState>();
 
   Future<String> addActivity(
     String nameactivity,
@@ -49,7 +53,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
     final response =
         await http.post(apiurl + '/Warehouse/addactivity.php', body: data);
     if (response.statusCode == 200) {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
       print(response.body);
       return response.body;
     } else {
@@ -82,24 +86,27 @@ class _ActivityManagementState extends State<ActivityManagement> {
               // horizontal: 40.0,//เปลี่ยนพื้นที่ว่าง
               vertical: 40.0, //เปลี่ยนพื้นที่ว่าง
             ),
-            child:
-                // Card(
-                //   // color: Colors.transparent,
-                //   shadowColor: Colors.black,
-                //   elevation: 4,
-                //   child:
-                Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _buildNameA(),
-                _buildQty(),
-                _buildDecription(),
-                _builddatestart(),
-                _builddateend(),
-                _buildstaretime(),
-                _buildendtime(),
-                _buildLoginBtn(),
-              ],
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  _buildNameA(),
+                  _buildQty(),
+                  _buildDecription(),
+                  // Row(
+                  //   children: [
+                  //     _builddatestart(),
+                  //     _builddateend(),
+                  //   ],
+                  // ),
+                  _builddatestart(),
+                  _builddateend(),
+                  _buildstaretime(),
+                  _buildendtime(),
+                  _buildLoginBtn(),
+                ],
+              ),
             ),
           ),
         ),
@@ -265,6 +272,8 @@ class _ActivityManagementState extends State<ActivityManagement> {
   }
 
   Widget _builddatestart() {
+    final dateFrom =
+        formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -301,6 +310,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
               ),
               readOnly: true, //อ่านอย่างเดียว
               decoration: InputDecoration(
+                hintText: dateFrom,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(top: 14.0),
                 suffixIcon: IconButton(
@@ -330,6 +340,8 @@ class _ActivityManagementState extends State<ActivityManagement> {
   }
 
   Widget _builddateend() {
+    final dateEnd =
+        formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -368,6 +380,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(top: 14.0),
+                hintText: dateEnd,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   tooltip: 'Tap to open date picker',
@@ -443,7 +456,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
                       builder: (context, childWidget) {
                         return MediaQuery(
                           data: MediaQuery.of(context)
-                              .copyWith(alwaysUse24HourFormat: true),
+                              .copyWith(alwaysUse24HourFormat: false),
                           child: childWidget,
                         );
                       },
@@ -553,19 +566,33 @@ class _ActivityManagementState extends State<ActivityManagement> {
         child: RaisedButton(
           elevation: 5.0,
           onPressed: () {
-            addActivity(
-              nameActivityController.text,
-              quantityController.text,
-              detailsController.text,
-              dateStarteController.text,
-              dateEndController.text,
-              timeStarteController.text,
-              timeEndController.text,
-            );
+            if (formKey.currentState.validate()) {
+              addActivity(
+                nameActivityController.text,
+                quantityController.text,
+                detailsController.text,
+                dateStarteController.text,
+                dateEndController.text,
+                timeStarteController.text,
+                timeEndController.text,
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return DialogWidget(
+                      title: 'ไม่สามารถเพิ่มกิจกรรมได้',
+                      subTitle: '',
+                      buttonTitle: 'ตกลง',
+                      color: Colors.red,
+                      iconData: Icons.warning);
+                },
+              );
+            }
           },
           padding: EdgeInsets.all(15.0),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: BorderRadius.circular(10.0),
           ),
           color: Color(0xFFFFEA18),
           child: Text(
