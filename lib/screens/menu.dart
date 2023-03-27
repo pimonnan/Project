@@ -457,7 +457,7 @@ class _MenuState extends State<Menu> {
             content: Text("คุณต้องการออกจากระบบใช่หรือไม่ ?"),
             actions: [
               ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.green),
+                style: ElevatedButton.styleFrom(primary: Color(0xFFFFEA18)),
                 onPressed: () {
                   sharedPreferences.clear();
                   sharedPreferences.commit();
@@ -478,7 +478,7 @@ class _MenuState extends State<Menu> {
                 ),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.red),
+                style: ElevatedButton.styleFrom(primary: Colors.grey),
                 onPressed: () {
                   Navigator.pop(context);
                 },

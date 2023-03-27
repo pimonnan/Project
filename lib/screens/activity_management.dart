@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projectnan/untils/constants.dart';
 import 'package:projectnan/untils/dialog_widget.dart';
+import 'package:projectnan/untils/space_widget.dart';
+import 'package:projectnan/untils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
@@ -82,10 +84,6 @@ class _ActivityManagementState extends State<ActivityManagement> {
           height: double.infinity,
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              // horizontal: 40.0,//เปลี่ยนพื้นที่ว่าง
-              vertical: 40.0, //เปลี่ยนพื้นที่ว่าง
-            ),
             child: Form(
               key: formKey,
               child: Column(
@@ -94,16 +92,8 @@ class _ActivityManagementState extends State<ActivityManagement> {
                   _buildNameA(),
                   _buildQty(),
                   _buildDecription(),
-                  // Row(
-                  //   children: [
-                  //     _builddatestart(),
-                  //     _builddateend(),
-                  //   ],
-                  // ),
-                  _builddatestart(),
-                  _builddateend(),
-                  _buildstaretime(),
-                  _buildendtime(),
+                  _builddatestartanddateend(),
+                  _buildstartandendtime(),
                   _buildLoginBtn(),
                 ],
               ),
@@ -120,7 +110,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
       padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: [
           Text(
             'ชื่อกิจกรรม',
             style: TextStyle(
@@ -129,21 +119,21 @@ class _ActivityManagementState extends State<ActivityManagement> {
                 fontFamily: 'OpenSans',
                 color: Colors.black),
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 5.0),
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 6.0,
+                  blurRadius: 8.0,
                   offset: Offset(0, 2),
                 ),
               ],
             ),
-            height: 60.0,
+            height: 50.0,
             child: TextFormField(
               controller: nameActivityController,
               style: TextStyle(
@@ -152,7 +142,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
               ),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 14.0),
+                contentPadding: EdgeInsets.only(left: 10.0),
                 hintText: 'กรุณากรอกชื่อกิจกรรม',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
@@ -172,7 +162,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
       padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: [
           Text(
             'จำนวนผู้เข้าร่วมกิจกรรม',
             style: TextStyle(
@@ -181,21 +171,21 @@ class _ActivityManagementState extends State<ActivityManagement> {
                 fontFamily: 'OpenSans',
                 color: Colors.black),
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 5.0),
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 6.0,
+                  blurRadius: 8.0,
                   offset: Offset(0, 2),
                 ),
               ],
             ),
-            height: 60.0,
+            height: 50.0,
             child: TextFormField(
               controller: quantityController,
               style: TextStyle(
@@ -204,7 +194,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
               ),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 14.0),
+                contentPadding: EdgeInsets.only(left: 10.0),
                 hintText: 'กรุณากรอกจำนวนผู้เข้าร่วมกิจกรรม',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
@@ -233,21 +223,21 @@ class _ActivityManagementState extends State<ActivityManagement> {
                 fontFamily: 'OpenSans',
                 color: Colors.black),
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 5.0),
           Container(
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 6.0,
+                  blurRadius: 8.0,
                   offset: Offset(0, 2),
                 ),
               ],
             ),
-            height: 60.0,
+            height: 50.0,
             child: TextFormField(
               controller: detailsController,
               style: TextStyle(
@@ -256,7 +246,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
               ),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 14.0),
+                contentPadding: EdgeInsets.only(left: 10.0),
                 hintText: 'กรุณากรอกรายละเอียดกิจกรรม',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
@@ -271,286 +261,286 @@ class _ActivityManagementState extends State<ActivityManagement> {
     );
   }
 
-  Widget _builddatestart() {
-    final dateFrom =
-        formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
+  Widget _buildstartandendtime() {
     return Padding(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'วันที่เริ่มกิจกรรม',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-                color: Colors.black),
+        children: [
+          Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'เวลาเริ่มต้น',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenSans',
+                    color: Colors.black),
+              ),
+              SizedBox(width: 102.0),
+              Text(
+                'เวลาสิ้นสุด',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenSans',
+                    color: Colors.black),
+              ),
+            ],
           ),
-          SizedBox(height: 10.0),
-          Container(
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 2),
+          verticalSpaceS,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            height: 60.0,
-            child: TextFormField(
-              controller: dateStarteController,
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'OpenSans',
-              ),
-              readOnly: true, //อ่านอย่างเดียว
-              decoration: InputDecoration(
-                hintText: dateFrom,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  tooltip: 'Tap to open date picker',
-                  onPressed: () async {
-                    final pickDateS = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2015, 8),
-                      lastDate: DateTime(2101),
-                    );
-                    final formatDate =
-                        DateFormat('yyyy-MM-dd').format(pickDateS);
-                    setState(() {
-                      dateStarteController.text = formatDate;
-                    });
-                  },
+                height: 50.0,
+                width: 175,
+                child: TextFormField(
+                  controller: timeStarteController,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'OpenSans',
+                  ),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 10.0, top: 12),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.access_time_sharp),
+                      tooltip: 'Tap to open date picker',
+                      onPressed: () async {
+                        final pickTimeS = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          builder: (context, childWidget) {
+                            return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: false),
+                              child: childWidget,
+                            );
+                          },
+                        );
+                        if (pickTimeS != null) {
+                          final formatTime = pickTimeS.format(context);
+                          setState(() {
+                            timeStarteController.text = formatTime;
+                          });
+                        } else {
+                          setState(() {
+                            timeStarteController.text = '';
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  onSaved: (String value) {},
                 ),
               ),
-              onSaved: (String value) {},
-            ),
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                height: 50.0,
+                width: 175,
+                child: TextFormField(
+                  controller: timeEndController,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'OpenSans',
+                  ),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(top: 12.0, left: 10),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.access_time_sharp),
+                      tooltip: 'Tap to open date picker',
+                      onPressed: () async {
+                        final pickTimeE = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          builder: (context, childWidget) {
+                            return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: false),
+                              child: childWidget,
+                            );
+                          },
+                        );
+                        if (pickTimeE != null) {
+                          final formatTime = pickTimeE.format(context);
+                          setState(() {
+                            timeEndController.text = formatTime;
+                          });
+                        } else {
+                          setState(() {
+                            timeEndController.text = '';
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  onSaved: (String value) {},
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _builddateend() {
+  Widget _builddatestartanddateend() {
+    final dateFrom =
+        formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
     final dateEnd =
         formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
     return Padding(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'ถึงวันที่',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-                color: Colors.black),
-          ),
-          SizedBox(height: 10.0),
-          Container(
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            height: 60.0,
-            child: TextFormField(
-              controller: dateEndController,
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'OpenSans',
+        children: [
+          Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'วันที่เริ่มกิจกรรม',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenSans',
+                    color: Colors.black),
               ),
-              readOnly: true,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                hintText: dateEnd,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  tooltip: 'Tap to open date picker',
-                  onPressed: () async {
-                    final pickDateE = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2015, 8),
-                      lastDate: DateTime(2101),
-                    );
-                    final formatDate =
-                        DateFormat('yyyy-MM-dd').format(pickDateE);
-                    setState(() {
-                      dateEndController.text = formatDate;
-                    });
-                  },
-                ),
+              SizedBox(width: 59.0),
+              Text(
+                'ถึงวันที่',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenSans',
+                    color: Colors.black),
               ),
-              onSaved: (String value) {},
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildstaretime() {
-    return Padding(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'เวลาเริ่มต้น',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-                color: Colors.black),
-          ),
-          SizedBox(height: 10.0),
-          Container(
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 2),
+          verticalSpaceS,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            height: 60.0,
-            child: TextFormField(
-              controller: timeStarteController,
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'OpenSans',
-              ),
-              readOnly: true,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.access_time_sharp),
-                  tooltip: 'Tap to open date picker',
-                  onPressed: () async {
-                    final pickTimeS = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      builder: (context, childWidget) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context)
-                              .copyWith(alwaysUse24HourFormat: false),
-                          child: childWidget,
+                height: 50.0,
+                width: 175,
+                child: TextFormField(
+                  controller: dateStarteController,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'OpenSans',
+                  ),
+                  readOnly: true, //อ่านอย่างเดียว
+                  decoration: InputDecoration(
+                    hintText: dateFrom,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 10.0, top: 12),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      tooltip: 'Tap to open date picker',
+                      onPressed: () async {
+                        final pickDateS = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2015, 8),
+                          lastDate: DateTime(2101),
                         );
+                        final formatDate =
+                            DateFormat('yyyy-MM-dd').format(pickDateS);
+                        setState(() {
+                          dateStarteController.text = formatDate;
+                        });
                       },
-                    );
-                    if (pickTimeS != null) {
-                      final formatTime = pickTimeS.format(context);
-                      setState(() {
-                        timeStarteController.text = formatTime;
-                      });
-                    } else {
-                      setState(() {
-                        timeStarteController.text = '';
-                      });
-                    }
-                  },
+                    ),
+                  ),
+                  onSaved: (String value) {},
                 ),
               ),
-              onSaved: (String value) {},
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildendtime() {
-    return Padding(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'เวลาสิ้นสุด',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-                color: Colors.black),
-          ),
-          SizedBox(height: 10.0),
-          Container(
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 2),
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            height: 60.0,
-            child: TextFormField(
-              controller: timeEndController,
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'OpenSans',
-              ),
-              readOnly: true,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.access_time_sharp),
-                  tooltip: 'Tap to open date picker',
-                  onPressed: () async {
-                    final pickTimeE = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      builder: (context, childWidget) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context)
-                              .copyWith(alwaysUse24HourFormat: false),
-                          child: childWidget,
+                height: 50.0,
+                width: 175,
+                child: TextFormField(
+                  controller: dateEndController,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'OpenSans',
+                  ),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 10.0, top: 12),
+                    hintText: dateEnd,
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      tooltip: 'Tap to open date picker',
+                      onPressed: () async {
+                        final pickDateE = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2015, 8),
+                          lastDate: DateTime(2101),
                         );
+                        final formatDate =
+                            DateFormat('yyyy-MM-dd').format(pickDateE);
+                        setState(() {
+                          dateEndController.text = formatDate;
+                        });
                       },
-                    );
-                    if (pickTimeE != null) {
-                      final formatTime = pickTimeE.format(context);
-                      setState(() {
-                        timeEndController.text = formatTime;
-                      });
-                    } else {
-                      setState(() {
-                        timeEndController.text = '';
-                      });
-                    }
-                  },
+                    ),
+                  ),
+                  onSaved: (String value) {},
                 ),
               ),
-              onSaved: (String value) {},
-            ),
+            ],
           ),
         ],
       ),
@@ -559,14 +549,23 @@ class _ActivityManagementState extends State<ActivityManagement> {
 
   Widget _buildLoginBtn() {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(15),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 25.0),
+        padding: EdgeInsets.symmetric(vertical: 10.0),
         width: double.infinity,
         child: RaisedButton(
           elevation: 5.0,
           onPressed: () {
-            if (formKey.currentState.validate()) {
+            if ((nameActivityController.text == '') ||
+                (quantityController.text == '') ||
+                (detailsController.text == '') ||
+                (dateStarteController.text == '') ||
+                (dateEndController.text == '') ||
+                (timeStarteController.text == '') ||
+                (timeEndController.text == '')) {
+              Utils().showSnackBar(context, 'กรุณาป้อนข้อมูลให้ครบถ้วน', 2000,
+                  Colors.yellow[600]);
+            } else if (formKey.currentState.validate()) {
               addActivity(
                 nameActivityController.text,
                 quantityController.text,
@@ -575,18 +574,6 @@ class _ActivityManagementState extends State<ActivityManagement> {
                 dateEndController.text,
                 timeStarteController.text,
                 timeEndController.text,
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return DialogWidget(
-                      title: 'ไม่สามารถเพิ่มกิจกรรมได้',
-                      subTitle: '',
-                      buttonTitle: 'ตกลง',
-                      color: Colors.red,
-                      iconData: Icons.warning);
-                },
               );
             }
           },

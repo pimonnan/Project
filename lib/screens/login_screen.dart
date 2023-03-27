@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:projectnan/screens/home.dart';
 import 'package:projectnan/untils/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:projectnan/untils/dialog_widget.dart';
+import 'package:projectnan/untils/utils.dart';
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,12 +25,15 @@ class _LoginScreenState extends State<LoginScreen> {
   SharedPreferences sharedPreferences;
 
   Future<String> Login(String username, String password) async {
-    Map data = {'username': username, 'password': password};
+    Map data = {
+      'username': username,
+      'password': password,
+    };
     // final response = await http.post(apiurl + '/login.php', body: data);
     final response =
         await http.post(apiurl + '/Warehouse/login.php', body: data);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var jsonData = null;
+    var jsonData;
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
 
@@ -41,46 +46,38 @@ class _LoginScreenState extends State<LoginScreen> {
         sharedPreferences.setString("s_id", jsonData['s_id']);
         sharedPreferences.setString("s_name", jsonData['s_name']);
       }
-      // print("Login Success" + response.body);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (BuildContext context) =>
                   Home()), //เป็นการเชื่อมหน้าต่อไป
           (route) => false);
-      // sharedPreferences = await SharedPreferences.getInstance();
-      // sharedPreferences.getString('p_id');
+      // Utils().showSnackBar(
+      //   context,
+      //   'เข้าสู่ระบบสำเร็จ',
+      //   2000,
+      //   Colors.green,
+      // );
+
       return response.body;
+    } else if ((usernameController.text == '') ||
+        (passwordController.text == '')) {
+      // Utils().showSnackBar(
+      //   context,
+      //   'กรุณาป้อนข้อมูลให้ครบถ้วน',
+      //   2000,
+      //   Colors.yellow[800],
+      // );
+      showSuccessDialog('กรุณาป้อนข้อมูลให้ครบถ้วน');
     } else {
       usernameController.clear();
       passwordController.clear();
-      _showDualog();
+      Utils().showSnackBar(
+        context,
+        'ชื่อผู้ใช้และรหัสผ่านไม่ถูกต้อง',
+        2000,
+        Colors.yellow[800],
+      );
     }
-  }
-
-  Future<void> _showDualog() async {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('เข้าสู่ระบบล้มเหลว'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: [
-                  Text("ชื่อผู้ใช้หรือรหัสผ่านของท่านไม่ถูกต้อง"),
-                  Text("กรุณากรอกข้อมูลให้ถูกต้องเพื่อเข้าสู่ระบบ")
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                  child: Text("ยืนยัน"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  })
-            ],
-          );
-        });
   }
 
   Widget _buildUsernameTF() {
@@ -179,6 +176,27 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = true; //เปลี่ยนจาก false เป็น true
+  }
+
+  void showSuccessDialog(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+          title: title,
+          subTitle: '',
+          buttonTitle: 'ตกลง',
+          color: Colors.green,
+          iconData: Icons.check,
+        );
+      },
+    );
+  }
+
   Widget _buildLoginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -206,13 +224,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _passwordVisible = true; //เปลี่ยนจาก false เป็น true
   }
 
   @override

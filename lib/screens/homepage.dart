@@ -36,7 +36,6 @@ class _HomepageState extends State<Homepage>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     animationController.dispose();
   }
@@ -54,9 +53,6 @@ class _HomepageState extends State<Homepage>
             floating: true,
             title: Text('การเข้าร่วมกิจกรรมของนักศึกษา'),
             centerTitle: true,
-            // actions: [
-            //   IconButton(icon: Icon(Icons.add), onPressed: () {}),
-            // ],
             backgroundColor: Color(0xFFFFEA18),
           ),
         ],
@@ -118,7 +114,7 @@ class _HomepageState extends State<Homepage>
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(50),
                     topRight: Radius.circular(50)),
-                color: Color(0xFFFFE837),
+                color: Colors.yellow[300],
               ),
               child: Stack(
                 children: <Widget>[
