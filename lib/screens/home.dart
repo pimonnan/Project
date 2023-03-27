@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:projectnan/model/activity.dart';
 import 'package:projectnan/screens/fitter_searchactivity.dart';
 // import 'package:projectnan/screens/activity.dart';
 import 'package:projectnan/screens/homepage.dart';
@@ -55,10 +56,6 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: RefreshIndicator(
         child: SafeArea(
           child: ClipRRect(
-            // borderRadius: BorderRadius.only(
-            //   topLeft: Radius.circular(30.0),
-            //   topRight: Radius.circular(30.0),
-            // ),
             child: BottomNavigationBar(
               currentIndex: _currentIndex,
               type: BottomNavigationBarType.fixed,
