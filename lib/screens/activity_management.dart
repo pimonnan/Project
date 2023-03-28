@@ -29,6 +29,8 @@ class _ActivityManagementState extends State<ActivityManagement> {
   SharedPreferences sharedPreferences;
   var formatting = DateFormat('d MMM yyyy', 'th'); //วันที่ไทย
   final formKey = GlobalKey<FormState>();
+  String dateStart;
+  String dateEnd;
 
   Future<String> addActivity(
     String nameactivity,
@@ -56,7 +58,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
         await http.post(apiurl + '/Warehouse/addactivity.php', body: data);
     if (response.statusCode == 200) {
       Navigator.pop(context, true);
-      print(response.body);
+      // print(response.body);
       return response.body;
     } else {
       nameActivityController.clear();
@@ -262,6 +264,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
   }
 
   Widget _buildstartandendtime() {
+    final timeForm = TimeOfDay.now().to24Hours();
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
@@ -315,6 +318,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
                   ),
                   readOnly: true,
                   decoration: InputDecoration(
+                    hintText: timeForm,
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.only(left: 10.0, top: 12),
                     suffixIcon: IconButton(
@@ -371,6 +375,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
                   ),
                   readOnly: true,
                   decoration: InputDecoration(
+                    hintText: timeForm,
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.only(top: 12.0, left: 10),
                     suffixIcon: IconButton(
@@ -414,7 +419,7 @@ class _ActivityManagementState extends State<ActivityManagement> {
   Widget _builddatestartanddateend() {
     final dateFrom =
         formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
-    final dateEnd =
+    var dateEnd =
         formatting.formatInBuddhistCalendarThai(DateTime.now()).toString();
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -482,9 +487,11 @@ class _ActivityManagementState extends State<ActivityManagement> {
                           firstDate: DateTime(2015, 8),
                           lastDate: DateTime(2101),
                         );
-                        final formatDate =
-                            DateFormat('yyyy-MM-dd').format(pickDateS);
+                        final formatDate = formatting
+                            .formatInBuddhistCalendarThai(pickDateS)
+                            .toString();
                         setState(() {
+                          dateStart = pickDateS.toString();
                           dateStarteController.text = formatDate;
                         });
                       },
@@ -529,9 +536,11 @@ class _ActivityManagementState extends State<ActivityManagement> {
                           firstDate: DateTime(2015, 8),
                           lastDate: DateTime(2101),
                         );
-                        final formatDate =
-                            DateFormat('yyyy-MM-dd').format(pickDateE);
+                        final formatDate = formatting
+                            .formatInBuddhistCalendarThai(pickDateE)
+                            .toString();
                         setState(() {
+                          dateEnd = pickDateE.toString();
                           dateEndController.text = formatDate;
                         });
                       },
@@ -563,15 +572,14 @@ class _ActivityManagementState extends State<ActivityManagement> {
                 (dateEndController.text == '') ||
                 (timeStarteController.text == '') ||
                 (timeEndController.text == '')) {
-              Utils().showSnackBar(context, 'กรุณาป้อนข้อมูลให้ครบถ้วน', 2000,
-                  Colors.yellow[600]);
+              showDistrictDialog('กรุณาป้อนข้อมูลให้ครบถ้วน');
             } else if (formKey.currentState.validate()) {
               addActivity(
                 nameActivityController.text,
                 quantityController.text,
                 detailsController.text,
-                dateStarteController.text,
-                dateEndController.text,
+                dateStart,
+                dateEnd,
                 timeStarteController.text,
                 timeEndController.text,
               );
@@ -595,5 +603,27 @@ class _ActivityManagementState extends State<ActivityManagement> {
         ),
       ),
     );
+  }
+
+  void showDistrictDialog(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+            title: title,
+            subTitle: '',
+            buttonTitle: 'ตกลง',
+            color: Colors.yellow,
+            iconData: Icons.warning);
+      },
+    );
+  }
+}
+
+extension TimeOfDayConveter on TimeOfDay {
+  String to24Hours() {
+    final hour = this.hour.toString().padLeft(2, '0');
+    final min = minute.toString().padLeft(2, '0');
+    return '$hour:$min';
   }
 }

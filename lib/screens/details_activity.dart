@@ -169,7 +169,7 @@ class _DetailsActivityState extends State<DetailsActivity> {
                   qrButton(activity.a_id, s_Id),
                   verticalSpaceM,
                   buttonOpenandStopActivity(),
-                  verticalSpaceS,
+                  verticalSpaceSSS,
                   tableStudent(),
                 ],
               ),
@@ -180,60 +180,62 @@ class _DetailsActivityState extends State<DetailsActivity> {
 
   Widget tableStudent() {
     if (p_Id != null) {
-      return DataTable(
-        columns: [
-          DataColumn(
-            label: Text(
-              'รหัสนักศึกษา',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          DataColumn(
-            label: Text(
-              'ชื่อนักศึกษา',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          DataColumn(
-            label: Text(
-              'สถานะ',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-        rows: joinactivity.map((data) {
-          return DataRow(
-            cells: [
-              DataCell(
-                Text(
-                  data.sId,
-                  style: TextStyle(fontSize: 14.0),
+      return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: DataTable(
+          columnSpacing: 20,
+          horizontalMargin: 2,
+          columns: [
+            DataColumn(
+              label: Text(
+                'รหัสนักศึกษา',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              DataCell(
-                Text(
-                  data.sName,
-                  style: TextStyle(fontSize: 14.0),
+            ),
+            DataColumn(
+              label: Text(
+                'ชื่อนักศึกษา',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              DataCell(
-                Text(
-                  data.joinStatus,
-                  style: TextStyle(fontSize: 14.0),
+            ),
+            DataColumn(
+              label: Text(
+                'สถานะ',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ],
-          );
-        }).toList(),
+            ),
+          ],
+          rows: joinactivity.map((data) {
+            return DataRow(
+              cells: [
+                DataCell(
+                  Text(
+                    data.sId,
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    data.sName,
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+                DataCell(
+                  textJoinActivityStatus(int.parse(data.joinStatus)),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
       );
     } else {
       return Container();
@@ -276,25 +278,26 @@ class _DetailsActivityState extends State<DetailsActivity> {
   textJoinActivityStatus(int status) {
     if (status == 0) {
       return Text(
-        'ยังไม่ได้เข้าร่วมกิจกรรม',
+        'ยังไม่ได้เข้าร่วม',
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.normal,
         ),
       );
     } else if (status == 1) {
       return Text(
-        'เข้าร่วมกิจกรรมแล้ว',
+        'เข้าร่วม',
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.normal,
         ),
       );
     } else if (status == 2) {
       return Text(
-        'ไม่ได้เข้าร่วมกิจกรรม',
+        'ไม่ได้เข้าร่วม',
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.normal,
         ),
       );

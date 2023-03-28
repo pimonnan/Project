@@ -41,7 +41,7 @@ class DialogWidget extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -59,6 +59,7 @@ class DialogWidget extends StatelessWidget {
                 buttonTitle,
                 style: TextStyle(
                   fontSize: 18.0,
+                  color: Colors.black,
                 ),
               ),
               onPressed: () {
