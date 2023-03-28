@@ -51,32 +51,15 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (BuildContext context) =>
                   Home()), //เป็นการเชื่อมหน้าต่อไป
           (route) => false);
-      // Utils().showSnackBar(
-      //   context,
-      //   'เข้าสู่ระบบสำเร็จ',
-      //   2000,
-      //   Colors.green,
-      // );
 
       return response.body;
     } else if ((usernameController.text == '') ||
         (passwordController.text == '')) {
-      // Utils().showSnackBar(
-      //   context,
-      //   'กรุณาป้อนข้อมูลให้ครบถ้วน',
-      //   2000,
-      //   Colors.yellow[800],
-      // );
-      showSuccessDialog('กรุณาป้อนข้อมูลให้ครบถ้วน');
+      showDistrictDialog('กรุณาป้อนข้อมูลให้ครบถ้วน');
     } else {
       usernameController.clear();
       passwordController.clear();
-      Utils().showSnackBar(
-        context,
-        'ชื่อผู้ใช้และรหัสผ่านไม่ถูกต้อง',
-        2000,
-        Colors.yellow[800],
-      );
+      showDistrictDialog('ชื่อผู้ใช้และรหัสผ่านไม่ถูกต้อง');
     }
   }
 
@@ -193,6 +176,20 @@ class _LoginScreenState extends State<LoginScreen> {
           color: Colors.green,
           iconData: Icons.check,
         );
+      },
+    );
+  }
+
+  void showDistrictDialog(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogWidget(
+            title: title,
+            subTitle: '',
+            buttonTitle: 'ตกลง',
+            color: Colors.yellow,
+            iconData: Icons.warning);
       },
     );
   }
